@@ -106,3 +106,52 @@ class CupcakeViewsTestCase(TestCase):
             })
 
             self.assertEqual(Cupcake.query.count(), 2)
+    
+    def test_patch_cupcake(self):
+        patch_cupcake = {
+            "flavor": "TestFlavorKT",
+            "size": "TestSizeKT",
+            "rating": 1,
+            "image": "http://test.com/cupcake2.jpg"
+        }
+        with app.test_client() as client:
+            url=f"/api/cupcakes/{self.cupcake.id}"
+            resp=client.patch(url,json=patch_cupcake)
+            self.assertEqual(resp.status_code,200)
+            data=resp.json
+        
+            self.assertEqual(data,{
+                "cupcake":{
+                    "id":self.cupcake.id,
+                    "flavor": "TestFlavorKT",
+                    "size": "TestSizeKT",
+                    "rating": 1,
+                    "image": "http://test.com/cupcake2.jpg"
+                }
+            })
+            
+            self.assertEqual(Cupcake.query.count(),1)
+
+    def test_delete_cupcake(self):
+        with app.test_client() as client:
+            url=f"/api/cupcakes/{self.cupcake.id}"
+            resp=client.delete(url)
+            self.assertEqual(resp.status_code,200)
+            data=resp.json
+            
+            self.assertEqual(data,{
+                "message":"deleted"
+            })
+            
+            self.assertEqual(Cupcake.query.count(),0)
+    
+    def test_delete_none_cupcake(self):
+        with app.test_client() as client:
+            url="/api/cupcakes/10"
+            resp=client.delete(url)
+            self.assertEqual(resp.status_code,404)
+            data=resp.json
+            
+            self.assertEqual(data,{
+                "message":"could not be found"
+            })
