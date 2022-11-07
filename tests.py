@@ -40,7 +40,6 @@ class CupcakeViewsTestCase(TestCase):
         cupcake = Cupcake(**CUPCAKE_DATA)
         db.session.add(cupcake)
         db.session.commit()
-
         self.cupcake = cupcake
 
     def tearDown(self):
